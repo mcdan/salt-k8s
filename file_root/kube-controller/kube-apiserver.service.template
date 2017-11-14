@@ -1,0 +1,42 @@
+[Unit]
+Description=Kubernetes API Server
+Documentation=https://github.com/GoogleCloudPlatform/kubernetes
+
+[Service]
+ExecStart={{ binaryroot }}/server/bin/kube-apiserver  \
+  --admission-control=Initializers,NamespaceLifecycle,NodeRestriction,LimitRanger,ServiceAccount,DefaultStorageClass,ResourceQuota  \
+  --advertise-address={{ internalIP }}  \
+  --allow-privileged=true  \
+  --apiserver-count=3  \
+  --audit-log-maxage=30  \
+  --audit-log-maxbackup=3  \
+  --audit-log-maxsize=100  \
+  --audit-log-path=/var/log/audit.log  \
+  --authorization-mode=Node,RBAC  \
+  --bind-address=0.0.0.0  \
+  --client-ca-file={{ certroot }}/ca.pem  \
+  --enable-swagger-ui=true  \
+  --etcd-cafile={{ certroot }}/ca.pem  \
+  --etcd-certfile={{ certroot }}/kubernetes.pem  \
+  --etcd-keyfile={{ certroot }}/kubernetes-key.pem  \
+  --etcd-servers=https://{{ internalIP }}:2379  \
+  --event-ttl=1h  \
+  --experimental-encryption-provider-config={{ confroot }}/encryption-config.yaml  \
+  --insecure-bind-address=127.0.0.1  \
+  --kubelet-certificate-authority={{ certroot }}/ca.pem  \
+  --kubelet-client-certificate={{ certroot }}/kubernetes.pem  \
+  --kubelet-client-key={{ certroot }}/kubernetes-key.pem  \
+  --kubelet-https=true  \
+  --runtime-config=api/all  \
+  --service-account-key-file={{ certroot }}/ca-key.pem  \
+  --service-cluster-ip-range=10.0.0.0/24  \
+  --service-node-port-range=30000-32767  \
+  --tls-ca-file={{ certroot }}/ca.pem  \
+  --tls-cert-file={{ certroot }}/kubernetes.pem  \
+  --tls-private-key-file={{ certroot }}/kubernetes-key.pem  \
+  --v=2
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
