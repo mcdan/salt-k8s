@@ -64,15 +64,16 @@ kube-proxy-use-context:
 
 kubelet-cni:
   archive.extracted:
-    - name: /etc/cni/net.d
+    - name: /etc/cni/bin
     - source: https://github.com/containernetworking/plugins/releases/download/v0.6.0/cni-plugins-amd64-v0.6.0.tgz
     - source_hash: sha256=f04339a21b8edf76d415e7f17b620e63b8f37a76b2f706671587ab6464411f2d
-    - unless: test -f /etc/cni/net.d/loopback
+    - unless: test -f /etc/cni/bin/loopback
 
 bridge-network:
   file.managed:
     - name: /etc/cni/net.d/10-bridge.conf
     - source: salt://kubelet/bridge-network.conf.template 
+    - makedirs: True
     - template: jinja
     - context:
       POD_CIDR: {{ pillar['kubernetes']['pod-cidr-prefix'] }}{{ grains['nodename'].split('-')[1] }}{{ pillar['kubernetes']['pod-cidr-suffix'] }}
@@ -81,6 +82,7 @@ loopback-network:
   file.managed:
     - name: /etc/cni/net.d/99-loopback.conf
     - source:  salt://kubelet/loopback-network.conf
+    - makedirs: True
 
 kubelet-service-conf:
   file.managed:
