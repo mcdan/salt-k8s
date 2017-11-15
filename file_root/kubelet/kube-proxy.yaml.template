@@ -1,0 +1,8 @@
+apiVersion: componentconfig/v1alpha1
+kind: KubeProxyConfiguration
+clientConnection:
+  kubeconfig: "/opt/k8s/conf/kube-proxy.kubeconfig"
+clusterCIDR: "10.200.0.0/16"
+hostnameOverride: "node-1.local"
+featureGates: AllAlpha=true
+mode: iptables

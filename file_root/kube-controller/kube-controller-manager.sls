@@ -9,7 +9,7 @@ kube-controller-manager-service-conf:
         internalIP: {{ grains['ipv4'][0] }}
         binaryroot: {{ pillar['kubernetes']['binary-root'] }}
         confroot: {{ pillar['kubernetes']['conf-root'] }}
-
+        CLUSER_CIDR: {{ pillar['kubernetes']['cluster-cidr'] }}
 kube-controller-manager-service:
   service.running:
     - name: kube-controller-manager.service

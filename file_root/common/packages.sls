@@ -14,6 +14,6 @@ common_packages:
     - pkgs:
       - docker-ce
       - git
-{% if grains['roles'] == 'worker' %}
+{% if 'worker' in grains['roles'] %}
       - socat
 {% endif %}

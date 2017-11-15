@@ -5,7 +5,7 @@ Documentation=https://github.com/GoogleCloudPlatform/kubernetes
 [Service]
 ExecStart={{ binaryroot }}/server/bin/kube-controller-manager \
   --address=0.0.0.0 \
-  --cluster-cidr=10.200.0.0/16 \
+  --cluster-cidr={{ CLUSTER_CIDR }} \
   --cluster-name=kubernetes \
   --cluster-signing-cert-file={{ certroot }}/ca.pem \
   --cluster-signing-key-file={{ certroot }}/ca-key.pem \
