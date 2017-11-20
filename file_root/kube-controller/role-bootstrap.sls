@@ -8,6 +8,8 @@ add-api-kublet-role:
     - name: {{ pillar['kubernetes']['binary-root'] }}/server/bin/kubectl apply -f {{ pillar['kubernetes']['conf-root'] }}/cluster-role.yaml
     - watch:
       - file: api-kublet-role-yaml
+    - require:
+      - service: kube-apiserver-service
 
 api-kublet-binding-yaml:
   file.managed:
@@ -19,3 +21,5 @@ add-kublet-role-binding:
     - name: {{ pillar['kubernetes']['binary-root'] }}/server/bin/kubectl apply -f {{ pillar['kubernetes']['conf-root'] }}/role-binding.yaml
     - watch:
       - file: api-kublet-binding-yaml
+    - require:
+      - service: kube-apiserver-service

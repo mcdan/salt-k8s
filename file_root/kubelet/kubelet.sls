@@ -30,19 +30,19 @@ kube-proxy-key:
 
 kublet-config-set-cluster:
   cmd.run:
-    - name: {{ pillar['kubernetes']['binary-root'] }}/server/bin/kubectl config set-cluster {{ pillar['kubernetes']['cluster-name'] }} --certificate-authority={{ pillar['kubernetes']['cert-root'] }}/ca.pem --embed-certs=true --server=https://{{ pillar['kubernetes']['controller-ip'] }}:6443 --kubeconfig={{ pillar['kubernetes']['conf-root'] }}/{{ grains['nodename'] }}.kubeconfig
+    - name: {{ pillar['kubernetes']['binary-root'] }}/server/bin/kubectl config set-cluster {{ pillar['kubernetes']['cluster-name'] }} --certificate-authority={{ pillar['kubernetes']['cert-root'] }}/ca.pem --embed-certs=true --server=https://{{ pillar['kubernetes']['controller-ip'] }}:6443 --kubeconfig={{ pillar['kubernetes']['conf-root'] }}/node.kubeconfig
 
 kublet-config-set-credentials:
   cmd.run:
-    - name: {{ pillar['kubernetes']['binary-root'] }}/server/bin/kubectl config set-credentials system:node:{{ grains['nodename'] }} --client-certificate={{ pillar['kubernetes']['cert-root'] }}/{{ grains['nodename'] }}.pem --client-key={{ pillar['kubernetes']['cert-root'] }}/{{ grains['nodename'] }}-key.pem --embed-certs=true --kubeconfig={{ pillar['kubernetes']['conf-root'] }}/{{ grains['nodename'] }}.kubeconfig
+    - name: {{ pillar['kubernetes']['binary-root'] }}/server/bin/kubectl config set-credentials system:node:{{ grains['nodename'] }}.local --client-certificate={{ pillar['kubernetes']['cert-root'] }}/{{ grains['nodename'] }}.pem --client-key={{ pillar['kubernetes']['cert-root'] }}/{{ grains['nodename'] }}-key.pem --embed-certs=true --kubeconfig={{ pillar['kubernetes']['conf-root'] }}/node.kubeconfig
 
 kublet-config-set-context:
   cmd.run:
-    - name: {{ pillar['kubernetes']['binary-root'] }}/server/bin/kubectl config set-context default --cluster={{ pillar['kubernetes']['cluster-name'] }} --user=system:node:{{ grains['nodename'] }} --kubeconfig={{ pillar['kubernetes']['conf-root'] }}/{{ grains['nodename'] }}.kubeconfig
+    - name: {{ pillar['kubernetes']['binary-root'] }}/server/bin/kubectl config set-context default --cluster={{ pillar['kubernetes']['cluster-name'] }} --user=system:node:{{ grains['nodename'] }}.local --kubeconfig={{ pillar['kubernetes']['conf-root'] }}/node.kubeconfig
 
 kublet-config-use-context:
   cmd.run:
-    - name: {{ pillar['kubernetes']['binary-root'] }}/server/bin/kubectl config use-context default --kubeconfig={{ pillar['kubernetes']['conf-root'] }}/{{ grains['nodename'] }}.kubeconfig
+    - name: {{ pillar['kubernetes']['binary-root'] }}/server/bin/kubectl config use-context default --kubeconfig={{ pillar['kubernetes']['conf-root'] }}/node.kubeconfig
 
 
 kube-proxy-set-cluster:
@@ -64,10 +64,10 @@ kube-proxy-use-context:
 
 kubelet-cni:
   archive.extracted:
-    - name: /etc/cni/bin
+    - name: /opt/cni/bin
     - source: https://github.com/containernetworking/plugins/releases/download/v0.6.0/cni-plugins-amd64-v0.6.0.tgz
     - source_hash: sha256=f04339a21b8edf76d415e7f17b620e63b8f37a76b2f706671587ab6464411f2d
-    - unless: test -f /etc/cni/bin/loopback
+    - unless: test -f /opt/cni/bin/loopback
 
 bridge-network:
   file.managed:
@@ -95,8 +95,9 @@ kubelet-service-conf:
       CA_CERT_FILE: {{ pillar['kubernetes']['cert-root'] }}/ca.pem
       POD_CIDR: {{ pillar['kubernetes']['pod-cidr-prefix'] }}{{ grains['nodename'].split('-')[1] }}{{ pillar['kubernetes']['pod-cidr-suffix'] }}
       K8S_BIN_ROOT: {{ pillar['kubernetes']['binary-root'] }} 
-      KUBE_CONFIG: {{ pillar['kubernetes']['conf-root'] }}/{{ grains['nodename'] }}.kubeconfig
+      KUBE_CONFIG: {{ pillar['kubernetes']['conf-root'] }}/node.kubeconfig
       CLUSTER_DNS: 10.32.0.10
+      HOSTNAME: {{ grains['nodename'] }}.local
 
 kube-proxy-config-file:
   file.managed:
@@ -123,6 +124,18 @@ kubelet-service:
     - enable: True
     - watch:
       - file: kubelet-service-conf
+
+kubelet-restart:
+  cmd.run:
+    - name: systemctl restart kubelet.service
+    - onchanges:
+      - file: kubelet-service-conf
+
+kube-proxy-restart:
+  cmd.run:
+    - name: systemctl restart kube-proxy.service
+    - onchanges:
+      - file: kube-proxy-service-conf
 
 kube-proxy-service:
   service.running:

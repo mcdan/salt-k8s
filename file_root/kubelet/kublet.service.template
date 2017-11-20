@@ -8,6 +8,7 @@ Requires=docker.service
 ExecStart={{ K8S_BIN_ROOT }}/server/bin/kubelet \
   --allow-privileged=true \
   --anonymous-auth=false \
+  --hostname-override={{ HOSTNAME }} \
   --authorization-mode=Webhook \
   --client-ca-file={{ CA_CERT_FILE }} \
   --cluster-dns={{ CLUSTER_DNS }} \

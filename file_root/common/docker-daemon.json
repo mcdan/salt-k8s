@@ -1,5 +1,6 @@
 {
-    "bridge": "cbr0",
-    "iptables": "false",
-    "ip-masq": "false"
+    "fixed-cidr": "{{ POD_CIDR }}",
+    "bip": "{{ BRIDGE_CIDR }}",
+    "iptables": true,
+    "ip-masq": true
 }

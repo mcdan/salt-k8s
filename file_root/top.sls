@@ -5,3 +5,4 @@ base:
   'G@roles:controller':
     - common
     - kube-controller
+    # - cilium

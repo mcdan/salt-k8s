@@ -10,7 +10,7 @@ kube-apiserver-service-conf:
         binaryroot: {{ pillar['kubernetes']['binary-root'] }}
         confroot: {{ pillar['kubernetes']['conf-root'] }}
 
-kube-apiserver-service::
+kube-apiserver-service:
   service.running:
     - name: kube-apiserver.service
     - enable: True
