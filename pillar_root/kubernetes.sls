@@ -5,8 +5,8 @@ kubernetes:
   conf-root: /opt/k8s/conf
   controller-ip: 10.0.0.10
   binary-root: /opt/bin/kubernetes
-  cluster-cidr: 10.200.0.0/16
-  pod-cidr-prefix: 10.200.
-  pod-cidr-suffix: .1/25
-  bridge-cidr-prefix: 10.200.
+  cluster-cidr: 10.0.0.0/16
+  pod-cidr-prefix: 10.0.
+  pod-cidr-suffix: .0/24
+  bridge-cidr-prefix: 10.0.
   bridge-cidr-suffix: .1/24

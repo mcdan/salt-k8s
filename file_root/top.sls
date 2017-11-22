@@ -6,3 +6,4 @@ base:
     - common
     - kube-controller
     # - cilium
+    - k8s-base-services

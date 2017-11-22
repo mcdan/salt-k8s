@@ -15,7 +15,8 @@ ExecStart={{ K8S_BIN_ROOT }}/server/bin/kubelet \
   --cluster-domain=cluster.local \
   --image-pull-progress-deadline=2m \
   --kubeconfig={{ KUBE_CONFIG }} \
-  --network-plugin=cni \
+#  --network-plugin=cni \
+  --network-plugin=kubenet \
   --pod-cidr={{ POD_CIDR }} \
   --register-node=true \
   --require-kubeconfig \
