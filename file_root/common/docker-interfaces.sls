@@ -24,7 +24,7 @@ cbr0-mtu:
       - cmd: cbr0-create
 cbr0-addr:
   cmd.run:
-    - name: ip addr add {{ pillar['kubernetes']['bridge-cidr-prefix'] }}{{ grains['nodename'].split('-')[1] }}{{ pillar['kubernetes']['bridge-cidr-suffix'] }} dev cbr0
+    - name: ip addr add {{ pillar['kubernetes']['bridge-cidr-prefix'] }}10{{ grains['nodename'].split('-')[1] }}{{ pillar['kubernetes']['bridge-cidr-suffix'] }} dev cbr0
     - onchanges:
       - cmd: cbr0-create
 cbr0-up:
@@ -39,7 +39,7 @@ configure-docker-daemon:
     - source: salt://common/docker-daemon.json
     - template: jinja
     - context:
-      POD_CIDR: {{ pillar['kubernetes']['pod-cidr-prefix'] }}{{ grains['nodename'].split('-')[1] }}{{ pillar['kubernetes']['pod-cidr-suffix'] }}
+      POD_CIDR: {{ pillar['kubernetes']['pod-cidr-prefix'] }}10{{ grains['nodename'].split('-')[1] }}{{ pillar['kubernetes']['pod-cidr-suffix'] }}
       BRIDGE_CIDR: {{ pillar['kubernetes']['bridge-cidr-prefix'] }}{{ grains['nodename'].split('-')[1] }}{{ pillar['kubernetes']['bridge-cidr-suffix'] }}
 
 docker-restart:

@@ -6,7 +6,7 @@ kube-scheduler-service-conf:
     - context:
         certroot: {{ pillar['kubernetes']['cert-root'] }}
         nodename: {{ grains['nodename'] }}
-        internalIP: {{ grains['ipv4'][0] }}
+        internalIP: {{ pillar['kubernetes']['controller-ip'] }}
         binaryroot: {{ pillar['kubernetes']['binary-root'] }}
         confroot: {{ pillar['kubernetes']['conf-root'] }}
 

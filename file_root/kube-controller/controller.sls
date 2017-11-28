@@ -31,3 +31,8 @@ kubernetes-encryption-config:
     - unless: test -f {{ pillar['kubernetes']['conf-root'] }}/encryption-config.yaml    
     - context:
       ENCRYPTION_KEY: {{salt['random.str_encode'](salt['random.get_str'](32), 'base64')}}
+
+add-k8s-tools:
+  cmd.run:
+    - name : echo export PATH=$PATH:/opt/bin/kubernetes/server/bin >> /home/ubuntu/.bashrc
+    - unless: grep "kubernetes/server/bin" /home/ubuntu/.bashrc

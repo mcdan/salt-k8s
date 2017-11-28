@@ -76,7 +76,7 @@ bridge-network:
     - makedirs: True
     - template: jinja
     - context:
-      POD_CIDR: {{ pillar['kubernetes']['pod-cidr-prefix'] }}{{ grains['nodename'].split('-')[1] }}{{ pillar['kubernetes']['pod-cidr-suffix'] }}
+      POD_CIDR: {{ pillar['kubernetes']['pod-cidr-prefix'] }}10{{ grains['nodename'].split('-')[1] }}{{ pillar['kubernetes']['pod-cidr-suffix'] }}
 
 loopback-network:
   file.managed:
@@ -93,7 +93,7 @@ kubelet-service-conf:
       CERT_FILE: {{ pillar['kubernetes']['cert-root'] }}/{{ grains['nodename'] }}.pem
       CERT_KEY: {{ pillar['kubernetes']['cert-root'] }}/{{ grains['nodename'] }}-key.pem
       CA_CERT_FILE: {{ pillar['kubernetes']['cert-root'] }}/ca.pem
-      POD_CIDR: {{ pillar['kubernetes']['pod-cidr-prefix'] }}{{ grains['nodename'].split('-')[1] }}{{ pillar['kubernetes']['pod-cidr-suffix'] }}
+      POD_CIDR: {{ pillar['kubernetes']['pod-cidr-prefix'] }}10{{ grains['nodename'].split('-')[1] }}{{ pillar['kubernetes']['pod-cidr-suffix'] }}
       K8S_BIN_ROOT: {{ pillar['kubernetes']['binary-root'] }} 
       KUBE_CONFIG: {{ pillar['kubernetes']['conf-root'] }}/node.kubeconfig
       CLUSTER_DNS: 10.32.0.10
