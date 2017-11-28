@@ -10,6 +10,7 @@ add-api-kublet-role:
       - file: api-kublet-role-yaml
     - require:
       - service: kube-apiserver-service
+    - unless: /opt/bin/kubernetes/server/bin/kubectl -n kube-system get clusterroles | grep "system:kube-apiserver-to-kubelet"
 
 api-kublet-binding-yaml:
   file.managed:
@@ -23,3 +24,4 @@ add-kublet-role-binding:
       - file: api-kublet-binding-yaml
     - require:
       - service: kube-apiserver-service
+    - unless: /opt/bin/kubernetes/server/bin/kubectl -n kube-system get clusterrolebinding | grep "system:kube-apiserver"
