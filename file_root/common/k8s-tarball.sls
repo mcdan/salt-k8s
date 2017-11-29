@@ -10,3 +10,4 @@ k8s-servers:
 k8s-binary-permissions:
   cmd.run:
     - name: chmod -R a+Xr {{ pillar['kubernetes']['binary-root'] }}
+    - unless: sudo -u ubuntu head -n 1 /opt/bin/kubernetes/LICENSES

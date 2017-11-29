@@ -22,6 +22,7 @@ ExecStart={{ K8S_BIN_ROOT }}/server/bin/kubelet \
   --require-kubeconfig \
   --runtime-request-timeout=15m \
   --tls-cert-file={{ CERT_FILE }} \
+  --non-masquerade-cidr={{ CLUSTER_CIDR }} \
   --tls-private-key-file={{ CERT_KEY }} \
   --v=2
 Restart=on-failure

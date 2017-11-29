@@ -1,0 +1,6 @@
+#!/bin/bash
+# kubenet static routes for inter pod networking
+/sbin/route {{CMD}} -net 10.200.0.0/16 dev enp0s8 || true
+{% for workerNum in range(1, pillar['kubernetes']['num-workers']+1) %}
+/sbin/route {{CMD}} -net {{pillar['kubernetes']['pod-cidr-prefix']}}10{{workerNum}}{{pillar['kubernetes']['pod-cidr-suffix']}} gw {{pillar['kubernetes']['pod-cidr-prefix']}}10{{workerNum}}.1 || true
+{% endfor %}

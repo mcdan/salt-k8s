@@ -1,17 +1,49 @@
 {% if 'worker' in grains['roles' ]%}
-docker-default-iptables:
-  iptables.flush:
-    - table: nat
 down-docker-default:
   network.managed:
     - name: docker0
     - enabled: False
     - type: bridge
     - ports: 
+
 remove-docker-interface:
    cmd.run:
      - name: ip link delete docker0
      - onlyif: ifconfig docker0
+
+docker-no-chain:
+  iptables.chain_absent:
+    - name: DOCKER
+
+docker-iso-no-chain:
+  iptables.chain_absent:
+    - name: DOCKER-ISOLATION
+
+forward_packets:
+  iptables.set_policy:
+    - chain: FORWARD
+    - policy: ACCEPT
+
+net.ipv4.ip_forward:
+  sysctl:
+    - present
+    - value: 1
+
+docker-flush-filter:
+  iptables.flush:
+    - table: filter
+    - onchanges:
+      - iptables: docker-no-chain
+      - iptables: docker-iso-no-chain
+      - iptables: forward_packets
+      
+docker-flush-nat:
+  iptables.flush:
+    - table: nat
+    - onchanges:
+      - iptables: docker-no-chain
+      - iptables: docker-iso-no-chain
+      - iptables: forward_packets
 
 cbr0-create:
   cmd.run:
@@ -47,6 +79,7 @@ docker-restart:
     - name: systemctl restart docker.service
     - onchanges:
       - file: configure-docker-daemon
+
 {% endif %}
 
 #route add -net 10.200.2.0 netmask 255.255.255.0 gw 10.0.0.12
@@ -76,3 +109,25 @@ docker-restart:
 
 #ClusterCIDR= 10.200.0.0/16 aaka  255.255.0.0 
 #PodCIDR = 10.200.1.0/24 aka 255.255.255.0  
+
+
+
+
+#iptables -t nat -X DOCKER
+
+
+
+
+#systemctl stop docker
+#iptables -t nat -F
+#iptables -t filter -F
+#iptables -X DOCKER
+#iptables -X DOCKER-ISOLATION
+#systemctl start docker
+
+
+# MIGHT WORK!
+# sudo route add -net 10.200.0.0/16 dev enp0s8
+# sudo route add -net 10.200.101.0/24 gw 10.200.101.1
+# sudo route add -net 10.200.102.0/24 gw 10.200.102.1
+# sudo route add -net 10.200.103.0/24 gw 10.200.103.1

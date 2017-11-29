@@ -1,3 +1,4 @@
 include:
   - kubelet.kubelet
-  - kubelet.cilium
+#  - kubelet.cilium
+  - kubelet.kubenet

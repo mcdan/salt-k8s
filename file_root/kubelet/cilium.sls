@@ -10,8 +10,17 @@ mount-bpffs-service:
     - watch:
       - file: mount-bpffs-service-conf
 
-cilium-cni-network-conf:
-  file.managed:
-    - name: /etc/cni/net.d/10-cilium.conf
-    - source: salt://kubelet/10-cilium.conf
-    - makedirs: True
+#bridge-network:
+#  file.managed:
+#    - name: /etc/cni/net.d/10-bridge.conf
+#   - source: salt://kubelet/bridge-network.conf.template 
+#   - makedirs: True
+#    - template: jinja
+#    - context:
+#      POD_CIDR: {{ pillar['kubernetes']['pod-cidr-prefix'] }}10{{ grains['nodename'].split('-')[1] }}{{ pillar['kubernetes']['pod-cidr-suffix'] }}
+
+#cilium-cni-network-conf:
+#  file.managed:
+#    - name: /etc/cni/net.d/10-cilium.conf
+#    - source: salt://kubelet/10-cilium.conf
+#    - makedirs: True

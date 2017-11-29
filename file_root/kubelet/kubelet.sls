@@ -31,35 +31,42 @@ kube-proxy-key:
 kublet-config-set-cluster:
   cmd.run:
     - name: {{ pillar['kubernetes']['binary-root'] }}/server/bin/kubectl config set-cluster {{ pillar['kubernetes']['cluster-name'] }} --certificate-authority={{ pillar['kubernetes']['cert-root'] }}/ca.pem --embed-certs=true --server=https://{{ pillar['kubernetes']['controller-ip'] }}:6443 --kubeconfig={{ pillar['kubernetes']['conf-root'] }}/node.kubeconfig
+    - unless: grep "{{ pillar['kubernetes']['cluster-name'] }}" {{ pillar['kubernetes']['conf-root'] }}/node.kubeconfig
 
 kublet-config-set-credentials:
   cmd.run:
     - name: {{ pillar['kubernetes']['binary-root'] }}/server/bin/kubectl config set-credentials system:node:{{ grains['nodename'] }}.local --client-certificate={{ pillar['kubernetes']['cert-root'] }}/{{ grains['nodename'] }}.pem --client-key={{ pillar['kubernetes']['cert-root'] }}/{{ grains['nodename'] }}-key.pem --embed-certs=true --kubeconfig={{ pillar['kubernetes']['conf-root'] }}/node.kubeconfig
+    - unless: grep "system:node:{{ grains['nodename'] }}.local" {{ pillar['kubernetes']['conf-root'] }}/node.kubeconfig
 
 kublet-config-set-context:
   cmd.run:
     - name: {{ pillar['kubernetes']['binary-root'] }}/server/bin/kubectl config set-context default --cluster={{ pillar['kubernetes']['cluster-name'] }} --user=system:node:{{ grains['nodename'] }}.local --kubeconfig={{ pillar['kubernetes']['conf-root'] }}/node.kubeconfig
+    - unless: grep "default" {{ pillar['kubernetes']['conf-root'] }}/node.kubeconfig
 
 kublet-config-use-context:
   cmd.run:
     - name: {{ pillar['kubernetes']['binary-root'] }}/server/bin/kubectl config use-context default --kubeconfig={{ pillar['kubernetes']['conf-root'] }}/node.kubeconfig
-
+    - unless: grep "current-context" {{ pillar['kubernetes']['conf-root'] }}/node.kubeconfig
 
 kube-proxy-set-cluster:
   cmd.run:
     - name: {{ pillar['kubernetes']['binary-root'] }}/server/bin/kubectl config set-cluster {{ pillar['kubernetes']['cluster-name'] }} --certificate-authority={{ pillar['kubernetes']['cert-root'] }}/ca.pem --embed-certs=true --server=https://{{ pillar['kubernetes']['controller-ip'] }}:6443 --kubeconfig={{ pillar['kubernetes']['conf-root'] }}/kube-proxy.kubeconfig
+    - unless: grep "{{ pillar['kubernetes']['cluster-name'] }}" {{ pillar['kubernetes']['conf-root'] }}/kube-proxy.kubeconfig
 
 kube-proxy-set-credentials:
   cmd.run:
     - name: {{ pillar['kubernetes']['binary-root'] }}/server/bin/kubectl config set-credentials kube-proxy --client-certificate={{ pillar['kubernetes']['cert-root'] }}/kube-proxy.pem --client-key={{ pillar['kubernetes']['cert-root'] }}/kube-proxy-key.pem --embed-certs=true --kubeconfig={{ pillar['kubernetes']['conf-root'] }}/kube-proxy.kubeconfig
+    - unless: grep "kube-proxy" {{ pillar['kubernetes']['conf-root'] }}/kube-proxy.kubeconfig
 
 kube-proxy-set-context:
   cmd.run:
     - name: {{ pillar['kubernetes']['binary-root'] }}/server/bin/kubectl config set-context default --cluster={{ pillar['kubernetes']['cluster-name'] }} --user=kube-proxy --kubeconfig={{ pillar['kubernetes']['conf-root'] }}/kube-proxy.kubeconfig
+    - unless: grep "default" {{ pillar['kubernetes']['conf-root'] }}/kube-proxy.kubeconfig
 
 kube-proxy-use-context:
   cmd.run:
     - name: {{ pillar['kubernetes']['binary-root'] }}/server/bin/kubectl config use-context default --kubeconfig={{ pillar['kubernetes']['conf-root'] }}/kube-proxy.kubeconfig
+    - unless: grep "current-context" {{ pillar['kubernetes']['conf-root'] }}/kube-proxy.kubeconfig
 
 
 kubelet-cni:
@@ -68,15 +75,6 @@ kubelet-cni:
     - source: https://github.com/containernetworking/plugins/releases/download/v0.6.0/cni-plugins-amd64-v0.6.0.tgz
     - source_hash: sha256=f04339a21b8edf76d415e7f17b620e63b8f37a76b2f706671587ab6464411f2d
     - unless: test -f /opt/cni/bin/loopback
-
-bridge-network:
-  file.managed:
-    - name: /etc/cni/net.d/10-bridge.conf
-    - source: salt://kubelet/bridge-network.conf.template 
-    - makedirs: True
-    - template: jinja
-    - context:
-      POD_CIDR: {{ pillar['kubernetes']['pod-cidr-prefix'] }}10{{ grains['nodename'].split('-')[1] }}{{ pillar['kubernetes']['pod-cidr-suffix'] }}
 
 loopback-network:
   file.managed:
@@ -98,6 +96,7 @@ kubelet-service-conf:
       KUBE_CONFIG: {{ pillar['kubernetes']['conf-root'] }}/node.kubeconfig
       CLUSTER_DNS: 10.32.0.10
       HOSTNAME: {{ grains['nodename'] }}.local
+      CLUSTER_CIDR: {{ pillar['kubernetes']['cluster-cidr'] }}
 
 kube-proxy-config-file:
   file.managed:

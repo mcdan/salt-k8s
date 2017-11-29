@@ -10,3 +10,4 @@ kubernetes:
   pod-cidr-suffix: .0/24
   bridge-cidr-prefix: 10.200.
   bridge-cidr-suffix: .0/24
+  num-workers: 3
