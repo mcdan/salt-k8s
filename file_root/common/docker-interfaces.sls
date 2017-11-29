@@ -4,7 +4,8 @@ cbr0-adapter:
     - name: cbr0
     - type: bridge
     - mtu: 1460
-    - ipaddr: {{ pillar['kubernetes']['bridge-cidr-prefix'] }}10{{ grains['nodename'].split('-')[1] }}{{ pillar['kubernetes']['bridge-cidr-suffix'] }}
+    - ipaddr: {{ pillar['kubernetes']['bridge-cidr-prefix'] }}10{{ grains['nodename'].split('-')[1] }}.1
+    - netmask: 255.255.255.0
     - enabled: True
     - ports: 
 
