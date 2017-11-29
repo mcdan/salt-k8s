@@ -1,7 +1,7 @@
 kubenet-routing-up:
   file.managed:
     - name: /etc/network/if-up.d/kubenet-routes
-    - source: salt://kubelet/kubenet-routes
+    - source: salt://common/kubenet-routes
     - makedirs: True
     - template: jinja
     - mode: 755
@@ -11,7 +11,7 @@ kubenet-routing-up:
 kubenet-routing-down:
   file.managed:
     - name: /etc/network/if-down.d/kubenet-routes
-    - source: salt://kubelet/kubenet-routes
+    - source: salt://common/kubenet-routes
     - makedirs: True
     - template: jinja
     - mode: 755
