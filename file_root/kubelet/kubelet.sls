@@ -93,7 +93,7 @@ kubelet-service-conf:
       POD_CIDR: {{ pillar['kubernetes']['pod-cidr-prefix'] }}10{{ grains['nodename'].split('-')[1] }}{{ pillar['kubernetes']['pod-cidr-suffix'] }}
       K8S_BIN_ROOT: {{ pillar['kubernetes']['binary-root'] }} 
       KUBE_CONFIG: {{ pillar['kubernetes']['conf-root'] }}/node.kubeconfig
-      CLUSTER_DNS: 10.32.0.10
+      CLUSTER_DNS: 10.0.0.2
       HOSTNAME: {{ grains['nodename'] }}.local
       CLUSTER_CIDR: {{ pillar['kubernetes']['cluster-cidr'] }}
 
