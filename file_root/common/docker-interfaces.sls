@@ -19,8 +19,6 @@ docker-flush-filter:
   iptables.flush:
     - table: filter
     - onchanges:
-      - iptables: docker-no-chain
-      - iptables: docker-iso-no-chain
       - iptables: forward_packets
       - network: down-docker-default
       
@@ -28,8 +26,6 @@ docker-flush-nat:
   iptables.flush:
     - table: nat
     - onchanges:
-      - iptables: docker-no-chain
-      - iptables: docker-iso-no-chain
       - iptables: forward_packets
       - network: down-docker-default
 

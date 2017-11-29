@@ -41,12 +41,12 @@ kublet-config-set-credentials:
 kublet-config-set-context:
   cmd.run:
     - name: {{ pillar['kubernetes']['binary-root'] }}/server/bin/kubectl config set-context default --cluster={{ pillar['kubernetes']['cluster-name'] }} --user=system:node:{{ grains['nodename'] }}.local --kubeconfig={{ pillar['kubernetes']['conf-root'] }}/node.kubeconfig
-    - unless: grep "default" {{ pillar['kubernetes']['conf-root'] }}/node.kubeconfig
+    - unless: 'grep "name: default" {{ pillar['kubernetes']['conf-root'] }}/node.kubeconfig'
 
 kublet-config-use-context:
   cmd.run:
     - name: {{ pillar['kubernetes']['binary-root'] }}/server/bin/kubectl config use-context default --kubeconfig={{ pillar['kubernetes']['conf-root'] }}/node.kubeconfig
-    - unless: grep "current-context" {{ pillar['kubernetes']['conf-root'] }}/node.kubeconfig
+    - unless: 'grep "current-context: default" {{ pillar['kubernetes']['conf-root'] }}/node.kubeconfig'
 
 kube-proxy-set-cluster:
   cmd.run:
@@ -61,13 +61,12 @@ kube-proxy-set-credentials:
 kube-proxy-set-context:
   cmd.run:
     - name: {{ pillar['kubernetes']['binary-root'] }}/server/bin/kubectl config set-context default --cluster={{ pillar['kubernetes']['cluster-name'] }} --user=kube-proxy --kubeconfig={{ pillar['kubernetes']['conf-root'] }}/kube-proxy.kubeconfig
-    - unless: grep "default" {{ pillar['kubernetes']['conf-root'] }}/kube-proxy.kubeconfig
+    - unless: 'grep "name: default" {{ pillar['kubernetes']['conf-root'] }}/kube-proxy.kubeconfig'
 
 kube-proxy-use-context:
   cmd.run:
     - name: {{ pillar['kubernetes']['binary-root'] }}/server/bin/kubectl config use-context default --kubeconfig={{ pillar['kubernetes']['conf-root'] }}/kube-proxy.kubeconfig
-    - unless: grep "current-context" {{ pillar['kubernetes']['conf-root'] }}/kube-proxy.kubeconfig
-
+    - unless: 'grep "current-context: default" {{ pillar['kubernetes']['conf-root'] }}/kube-proxy.kubeconfig'
 
 kubelet-cni:
   archive.extracted:
@@ -121,8 +120,6 @@ kubelet-service:
   service.running:
     - name: kubelet.service
     - enable: True
-    - onchanges:
-      - file: kubelet-service-conf
 
 kubelet-restart:
   cmd.run:
