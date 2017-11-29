@@ -121,7 +121,7 @@ kubelet-service:
   service.running:
     - name: kubelet.service
     - enable: True
-    - watch:
+    - onchanges:
       - file: kubelet-service-conf
 
 kubelet-restart:

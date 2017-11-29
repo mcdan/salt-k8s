@@ -1,10 +1,37 @@
 {% if 'worker' in grains['roles' ]%}
+cbr0-adapter:
+  network.managed:
+    - name: cbr0
+    - type: bridge
+    - mtu: 1460
+    - ipaddr: {{ pillar['kubernetes']['bridge-cidr-prefix'] }}10{{ grains['nodename'].split('-')[1] }}{{ pillar['kubernetes']['bridge-cidr-suffix'] }}
+    - enabled: True
+    - ports: 
+
 down-docker-default:
   network.managed:
     - name: docker0
     - enabled: False
     - type: bridge
     - ports: 
+
+docker-flush-filter:
+  iptables.flush:
+    - table: filter
+    - onchanges:
+      - iptables: docker-no-chain
+      - iptables: docker-iso-no-chain
+      - iptables: forward_packets
+      - network: down-docker-default
+      
+docker-flush-nat:
+  iptables.flush:
+    - table: nat
+    - onchanges:
+      - iptables: docker-no-chain
+      - iptables: docker-iso-no-chain
+      - iptables: forward_packets
+      - network: down-docker-default
 
 remove-docker-interface:
    cmd.run:
@@ -28,42 +55,6 @@ net.ipv4.ip_forward:
   sysctl:
     - present
     - value: 1
-
-docker-flush-filter:
-  iptables.flush:
-    - table: filter
-    - onchanges:
-      - iptables: docker-no-chain
-      - iptables: docker-iso-no-chain
-      - iptables: forward_packets
-      
-docker-flush-nat:
-  iptables.flush:
-    - table: nat
-    - onchanges:
-      - iptables: docker-no-chain
-      - iptables: docker-iso-no-chain
-      - iptables: forward_packets
-
-cbr0-create:
-  cmd.run:
-    - name:  ip link add name cbr0 type bridge
-    - unless: ifconfig cbr0
-cbr0-mtu:
-  cmd.run:
-    - name: ip link set dev cbr0 mtu 1460
-    - onchanges:
-      - cmd: cbr0-create
-cbr0-addr:
-  cmd.run:
-    - name: ip addr add {{ pillar['kubernetes']['bridge-cidr-prefix'] }}10{{ grains['nodename'].split('-')[1] }}{{ pillar['kubernetes']['bridge-cidr-suffix'] }} dev cbr0
-    - onchanges:
-      - cmd: cbr0-create
-cbr0-up:
-  cmd.run:
-    - name: ip link set dev cbr0 up
-    - onchanges:
-      - cmd: cbr0-create
 
 configure-docker-daemon:
   file.managed:
