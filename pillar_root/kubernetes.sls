@@ -11,3 +11,4 @@ kubernetes:
   bridge-cidr-prefix: 10.200.
   bridge-cidr-suffix: .0/24
   num-workers: 3
+  dns-ip: 10.0.0.2
