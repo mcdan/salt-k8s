@@ -1,8 +1,20 @@
+admin-cert:
+  file.managed:
+    - name: {{ pillar['kubernetes']['cert-root'] }}/admin.pem
+    - source: salt://certs/admin.pem
+    - makedirs: True
+
+admin-key:
+  file.managed:
+    - name: {{ pillar['kubernetes']['cert-root'] }}/admin-key.pem
+    - source: salt://certs/admin-key.pem
+    - makedirs: True
+
+
 admin-config-set-cluster:
   cmd.run:
     - name: {{ pillar['kubernetes']['binary-root'] }}/server/bin/kubectl config set-cluster {{ pillar['kubernetes']['cluster-name'] }} --certificate-authority={{ pillar['kubernetes']['cert-root'] }}/ca.pem --embed-certs=true --server=https://{{ pillar['kubernetes']['public-ip'] }}:6443 --kubeconfig={{ pillar['kubernetes']['conf-root'] }}/admin.kubeconfig
     - unless: grep "{{ pillar['kubernetes']['cluster-name'] }}" {{ pillar['kubernetes']['conf-root'] }}/admin.kubeconfig
-
 
 admin-config-set-credentials:
   cmd.run:
