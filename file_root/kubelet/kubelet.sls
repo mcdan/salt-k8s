@@ -1,16 +1,16 @@
-kublet-ca-pem:
+kubelet-ca-pem:
   file.managed:
     - name: /opt/k8s/certs/ca.pem
     - source: salt://certs/ca.pem
     - makedirs: True
 
-kublet-node-key:
+kubelet-node-key:
   file.managed:
     - name: {{ pillar['kubernetes']['cert-root'] }}/{{ grains['nodename'] }}-key.pem
     - source: salt://certs/{{ grains['nodename'] }}-key.pem
     - makedirs: True
 
-kublet-node-pem:
+kubelet-node-pem:
   file.managed:
     - name: {{ pillar['kubernetes']['cert-root'] }}/{{ grains['nodename'] }}.pem
     - source: salt://certs/{{ grains['nodename'] }}.pem
@@ -28,22 +28,22 @@ kube-proxy-key:
     - source: salt://certs/kube-proxy-key.pem
     - makedirs: True
 
-kublet-config-set-cluster:
+kubelet-config-set-cluster:
   cmd.run:
     - name: {{ pillar['kubernetes']['binary-root'] }}/server/bin/kubectl config set-cluster {{ pillar['kubernetes']['cluster-name'] }} --certificate-authority={{ pillar['kubernetes']['cert-root'] }}/ca.pem --embed-certs=true --server=https://{{ pillar['kubernetes']['controller-ip'] }}:6443 --kubeconfig={{ pillar['kubernetes']['conf-root'] }}/node.kubeconfig
     - unless: grep "{{ pillar['kubernetes']['cluster-name'] }}" {{ pillar['kubernetes']['conf-root'] }}/node.kubeconfig
 
-kublet-config-set-credentials:
+kubelet-config-set-credentials:
   cmd.run:
     - name: {{ pillar['kubernetes']['binary-root'] }}/server/bin/kubectl config set-credentials system:node:{{ grains['nodename'] }}.local --client-certificate={{ pillar['kubernetes']['cert-root'] }}/{{ grains['nodename'] }}.pem --client-key={{ pillar['kubernetes']['cert-root'] }}/{{ grains['nodename'] }}-key.pem --embed-certs=true --kubeconfig={{ pillar['kubernetes']['conf-root'] }}/node.kubeconfig
     - unless: grep "system:node:{{ grains['nodename'] }}.local" {{ pillar['kubernetes']['conf-root'] }}/node.kubeconfig
 
-kublet-config-set-context:
+kubelet-config-set-context:
   cmd.run:
     - name: {{ pillar['kubernetes']['binary-root'] }}/server/bin/kubectl config set-context default --cluster={{ pillar['kubernetes']['cluster-name'] }} --user=system:node:{{ grains['nodename'] }}.local --kubeconfig={{ pillar['kubernetes']['conf-root'] }}/node.kubeconfig
     - unless: 'grep "name: default" {{ pillar['kubernetes']['conf-root'] }}/node.kubeconfig'
 
-kublet-config-use-context:
+kubelet-config-use-context:
   cmd.run:
     - name: {{ pillar['kubernetes']['binary-root'] }}/server/bin/kubectl config use-context default --kubeconfig={{ pillar['kubernetes']['conf-root'] }}/node.kubeconfig
     - unless: 'grep "current-context: default" {{ pillar['kubernetes']['conf-root'] }}/node.kubeconfig'
@@ -84,7 +84,7 @@ loopback-network:
 kubelet-service-conf:
   file.managed:
     - name: /etc/systemd/system/kubelet.service
-    - source:  salt://kubelet/kublet.service.template
+    - source:  salt://kubelet/kubelet.service.template
     - template: jinja
     - context:
       CERT_FILE: {{ pillar['kubernetes']['cert-root'] }}/{{ grains['nodename'] }}.pem
