@@ -5,3 +5,4 @@ include:
   - kube-controller.kube-controller-manager
   - kube-controller.kube-scheduler
   - kube-controller.role-bootstrap
+  - kube-controller.admin-config
