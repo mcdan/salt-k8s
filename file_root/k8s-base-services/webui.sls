@@ -18,4 +18,4 @@ dashboard-admin-role:
 dashboard-k8s-deployment:
   cmd.run:
     - name: {{ pillar['kubernetes']['binary-root'] }}/server/bin/kubectl --kubeconfig={{ pillar['kubernetes']['conf-root'] }}/admin.kubeconfig create -f {{ pillar['kubernetes']['conf-root'] }}/deploys/kubernetes-dashboard.yaml
-    - unless: kubectl --kubeconfig --kubeconfig={{ pillar['kubernetes']['conf-root'] }}/admin.kubeconfig -n kube-system get deployments kubernetes-dashboard
+    - unless: kubectl --kubeconfig={{ pillar['kubernetes']['conf-root'] }}/admin.kubeconfig -n kube-system get deployments kubernetes-dashboard

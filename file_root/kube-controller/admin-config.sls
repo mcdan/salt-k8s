@@ -30,3 +30,8 @@ admin-config-use-context:
   cmd.run:
     - name: {{ pillar['kubernetes']['binary-root'] }}/server/bin/kubectl config use-context default --kubeconfig={{ pillar['kubernetes']['conf-root'] }}/admin.kubeconfig
     - unless: 'grep "current-context: default" {{ pillar['kubernetes']['conf-root'] }}/admin.kubeconfig'
+
+admin-allow-ubuntu:
+  cmd.run:
+    - name: chown ubuntu {{ pillar['kubernetes']['conf-root'] }}/admin.kubeconfig
+    - unless: sudo -u ubuntu head -n 1 {{ pillar['kubernetes']['conf-root'] }}/admin.kubeconfig
