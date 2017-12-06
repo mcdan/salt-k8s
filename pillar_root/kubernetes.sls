@@ -12,3 +12,4 @@ kubernetes:
   bridge-cidr-suffix: .0/24
   num-workers: 3
   dns-ip: 10.0.0.2
+  heketi-port: 9090

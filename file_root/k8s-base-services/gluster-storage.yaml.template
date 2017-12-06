@@ -1,0 +1,10 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: gluster
+provisioner: kubernetes.io/glusterfs
+parameters:
+  resturl: "http://master.local:{{HEKETI_PORT}}"
+  restuser: "user"
+  restuserkey: "whatever"
+  volumetype: "replicate:3"
