@@ -1,4 +1,4 @@
-added_repos:
+docker-repo:
   pkgrepo.managed:
     - humanname: Docker.io ce
     - name: deb https://download.docker.com/linux/ubuntu xenial stable
