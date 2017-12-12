@@ -6,3 +6,4 @@ include:
   - kube-controller.kube-scheduler
   - kube-controller.role-bootstrap
   - kube-controller.admin-config
+  - kube-shared.kube-proxy

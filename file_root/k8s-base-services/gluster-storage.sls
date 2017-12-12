@@ -1,4 +1,4 @@
-heketi-deployment-definition:
+gluster-storage-deployment-definition:
   file.managed:
     - name: {{ pillar['kubernetes']['conf-root'] }}/deploys/gluster-storage.yaml
     - source: salt://k8s-base-services/gluster-storage.yaml.template
@@ -7,7 +7,7 @@ heketi-deployment-definition:
     - context:
       HEKETI_PORT: {{ pillar['kubernetes']['heketi-port'] }}
 
-heketi-sample-definition:
+gluster-storage-sample-definition:
   file.managed:
     - name: {{ pillar['kubernetes']['conf-root'] }}/deploys/nginx-gluster.yaml
     - source: salt://k8s-base-services/nginx-gluster.yaml.template

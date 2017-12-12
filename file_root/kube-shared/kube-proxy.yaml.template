@@ -3,6 +3,6 @@ kind: KubeProxyConfiguration
 clientConnection:
   kubeconfig: "/opt/k8s/conf/kube-proxy.kubeconfig"
 clusterCIDR: "{{CLUSTER_CIDR}}"
-hostnameOverride: "node-1.local"
+hostnameOverride: "{{HOSTNAME}}"
 featureGates: AllAlpha=true
 mode: iptables

@@ -14,7 +14,7 @@ spec:
 apiVersion: apps/v1beta2 # for versions before 1.8.0 use apps/v1beta1
 kind: Deployment
 metadata:
-  name: nginx-gluster-deployment
+  name: nginx-gluster
   labels:
     app: nginx-gluster
 spec:
@@ -28,7 +28,7 @@ spec:
         app: nginx-gluster
     spec:
       containers:
-        - name: nginx-pod1
+        - name: nginx-pod
           image: gcr.io/google_containers/nginx-slim:0.8
           ports:
             - name: web
@@ -40,3 +40,30 @@ spec:
         - name: gluster-vol1
           persistentVolumeClaim:
             claimName: gluster1
+---
+apiVersion: v1
+kind: Service
+metadata:
+ name: nginx-gluster-service
+spec:
+ selector:
+  app: "nginx-gluster"
+ type: NodePort
+ ports:
+  - name: web
+    protocol: TCP
+    port: 80
+---
+apiVersion: "extensions/v1beta1"
+kind: Ingress
+metadata:
+ name: "nginx-gluster-ingress"
+spec:
+ rules:
+  - host: "sample.com"
+    http:
+     paths:
+      - path: "/"
+        backend:
+         serviceName: nginx-gluster-service
+         servicePort: 80
