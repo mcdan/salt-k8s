@@ -48,6 +48,7 @@ kube-proxy-service-conf:
     - context:
       PROXY_CONFIG_FILE: {{ pillar['kubernetes']['conf-root'] }}/kube-proxy.yaml
       K8S_BIN_ROOT: {{ pillar['kubernetes']['binary-root'] }}
+      CONTROLLER_IP: {{ pillar['kubernetes']['controller-ip'] }}
 
 kube-proxy-restart:
   cmd.run:
