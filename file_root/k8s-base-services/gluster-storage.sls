@@ -1,6 +1,6 @@
 gluster-storage-deployment-definition:
   file.managed:
-    - name: {{ pillar['kubernetes']['conf-root'] }}/deploys/gluster-storage.yaml
+    - name: {{ pillar['kubernetes']['conf-root'] }}/deploys/gluster/gluster-storage.yaml
     - source: salt://k8s-base-services/gluster-storage.yaml.template
     - template: jinja
     - makedirs: True
@@ -9,7 +9,7 @@ gluster-storage-deployment-definition:
 
 gluster-storage-sample-definition:
   file.managed:
-    - name: {{ pillar['kubernetes']['conf-root'] }}/deploys/nginx-gluster.yaml
+    - name: {{ pillar['kubernetes']['conf-root'] }}/deploys/gluster/nginx-gluster.yaml
     - source: salt://k8s-base-services/nginx-gluster.yaml.template
     - template: jinja
     - makedirs: True
