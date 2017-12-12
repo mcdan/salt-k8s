@@ -1,3 +1,13 @@
+forward_packets:
+  iptables.set_policy:
+    - chain: FORWARD
+    - policy: ACCEPT
+
+net.ipv4.ip_forward:
+  sysctl:
+    - present
+    - value: 1
+
 {% if 'worker' in grains['roles' ]%}
 cbr0-adapter:
   network.managed:
@@ -42,16 +52,6 @@ docker-no-chain:
 docker-iso-no-chain:
   iptables.chain_absent:
     - name: DOCKER-ISOLATION
-
-forward_packets:
-  iptables.set_policy:
-    - chain: FORWARD
-    - policy: ACCEPT
-
-net.ipv4.ip_forward:
-  sysctl:
-    - present
-    - value: 1
 
 configure-docker-daemon:
   file.managed:
