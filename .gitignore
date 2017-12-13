@@ -1,0 +1,4 @@
+file_root/certs/*
+pillar_root/num-workers.sls
+pillar_root/public-ip.sls
+
